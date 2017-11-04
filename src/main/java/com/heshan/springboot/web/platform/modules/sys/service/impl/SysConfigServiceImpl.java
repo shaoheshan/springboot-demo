@@ -26,9 +26,7 @@ public class SysConfigServiceImpl implements SysConfigService {
 
 	@Autowired
 	private SysConfigDao sysConfigDao;
-	@Value("${vhsc.api.api4.host}")
     private String apiUrl;
-	@Value("${vhsc.api.api4.barCodeRule}")
 	private String barCodeRuleUrl;
 	
 	@Override
@@ -54,14 +52,10 @@ public class SysConfigServiceImpl implements SysConfigService {
         try {
             String jsonParams = JSON.toJSONString("");
             //String replace = jsonParams.replaceAll("\\\\","");
-            logger.info("条码配置接口发送======>url:" + url + ",接口发送" +jsonParams);
             String postBody = HttpUtil.doPostJson(url, jsonParams);
-            logger.info("条码配置接口返回<=======url:" + url + ",返回内容" + postBody);
             JSONObject object = JSONObject.parseObject(postBody);
             return PageResult.setResult(object.getInteger("code"), object.getString("msg"));
         } catch (Exception e) {
-        	
-            logger.error("条码配置异常！msg:" + e.getMessage(), e);
             return PageResult.error(500, "调用接口失败");
         }
 		

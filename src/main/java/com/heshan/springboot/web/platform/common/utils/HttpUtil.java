@@ -31,7 +31,7 @@ import net.sf.json.JSONObject;
  * 
  * @ClassName: HttpUtil
  * @Description: http接口调用
- * @author liusongqing
+ * @author frank
  * @date 2017年8月9日 上午11:39:07
  *
  */
@@ -225,7 +225,7 @@ public class HttpUtil {
     }
 
     public static String callApi4(String url, String json) {
-        String api4Url = Const.API4_HOST + url;
+        String api4Url = url;
         return doPostJson(api4Url, json);
     }
 

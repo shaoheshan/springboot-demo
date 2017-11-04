@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Random;
 
 /**
- * @author liusongqing
+ * @author frank
  * @ClassName: TokenProcessor
  * @Description: token 产生器 防止重复提交
  * @date 2017年5月19日 下午1:15:54

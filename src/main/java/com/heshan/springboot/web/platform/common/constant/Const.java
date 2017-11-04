@@ -1,6 +1,5 @@
 package com.heshan.springboot.web.platform.common.constant;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -9,7 +8,7 @@ import java.util.List;
 /**
  * @ClassName: Const
  * @Description: 常量
- * @author liusongqing
+ * @author frank
  * @date 2017年8月4日 下午6:07:28
  */
 @Component
@@ -25,11 +24,6 @@ public class Const {
     public static final String AUTHORIZATION_KEY = "Authorization";// 主要用于前端视图层调用
     public static final String ACCESS_TO_KEN_KEY = "access_token";// 主要用于API调用
 
-    public static String API4_HOST; // 用于调用API4的地址
-    @Value("${vhsc.api.api4.host}")
-    public void setApi4Host(String api4Host) {
-        API4_HOST = api4Host;
-    }
 
     /**
      * 合法的图形文件后缀名

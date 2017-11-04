@@ -22,7 +22,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 /**
  * @ClassName: SwaggerConfig
  * @Description: Swagger2配置 http://localhost:8080/swagger-ui.html
- * @author liusongqing
+ * @author frank
  * @date 2017年8月11日 上午9:28:34
  */
 @Configuration
@@ -44,8 +44,8 @@ public class SwaggerConfig {
     }
 
     private ApiInfo apiInfo() {
-        Contact contact = new Contact("LiuSongqing", "http://www.flyheze.top", "liusongqing@gmail.com");
-        return new ApiInfoBuilder().title("供应宝医院端2.0前台API接口").version("2.0").description("http://www.flyheze.top")
+        Contact contact = new Contact("frank", "http://www.flyheze.top", "frank@gmail.com");
+        return new ApiInfoBuilder().title("SpringDemo前台API接口").version("2.0").description("http://www.flyheze.top")
                 .termsOfServiceUrl("http://www.flyheze.top").version("2.0").contact(contact).build();
     }
 }

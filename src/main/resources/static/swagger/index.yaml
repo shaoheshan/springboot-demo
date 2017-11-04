@@ -3,8 +3,8 @@
 swagger: '2.0'
 info:
   version: 1.0.0
-  title: 东软望海快速开发平台
-  description: vh-jee-platform是一个轻量级的Java快速开发平台
+  title: springboot-demo
+  description: springboot-demo
 
 #Swagger会提供测试用例，host指定测试时的主机名，如果没有指定就是当前主机,可以指定端口．
 host: 127.0.0.1:8080

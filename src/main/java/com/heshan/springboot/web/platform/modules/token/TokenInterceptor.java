@@ -17,7 +17,7 @@ import java.util.Map;
 /**
  * @ClassName: TokenInterceptor
  * @Description: Token拦截器
- * @author liusongqing
+ * @author frank
  * @date 2017年5月19日 下午1:17:34
  */
 @Slf4j

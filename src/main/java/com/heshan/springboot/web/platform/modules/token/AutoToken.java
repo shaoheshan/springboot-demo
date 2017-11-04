@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 /**
  * @ClassName: AutoToken
  * @Description: 方法注解
- * @author liusongqing
+ * @author frank
  * @date 2017年5月19日 下午1:15:54
  */
 @Target(ElementType.METHOD)
