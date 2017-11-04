@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="libs/jquery.min.js"></script>
+<meta charset="utf-8" />
+<title>Ajax提交form表单上传文件</title>
+<script type="text/javascript">
+	function test() {
+		var form = new FormData(document.getElementById("form"));
+		$.ajax({
+			url : "/file/upload?Authorization=bcadb3e0494557e9bf02b1577ed05a8f",
+			type : "post",
+			data : form,
+			cache : false,
+			processData : false,
+			contentType : false,
+			success : function(data) {
+				alert("操作成功！");
+			},
+			error : function(e) {
+				alert("网络错误，请重试！！");
+			}
+		});
+	}
+</script>
+</head>
+<body>
+	<form id="form" enctype="multipart/form-data">
+		<input type="hidden" name="bizAlias" value="cert" />
+		<input type="file" id="fileAttach" name="vhsc_upload_file" /><br />
+		<input type="file" id="fileAttach" name="vhsc_upload_file" />
+		<input type="button" onclick="test()" value="上传" />
+	</form>
+</body>
+</html>

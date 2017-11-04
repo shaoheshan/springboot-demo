@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.heshan.springboot.web.myApp.modules.sys.dao.SysRoleResourceDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.heshan.springboot.web.myApp.modules.sys.entity.SysRoleResourceEntity" id="sysRoleResourceMap">
+					<result property="id" column="id"/>
+					<result property="roleId" column="role_id"/>
+					<result property="resId" column="res_id"/>
+					<result property="orgId" column="org_id"/>
+					<result property="createTime" column="create_time"/>
+					<result property="createUser" column="create_user"/>
+		    </resultMap>
+
+	<select id="queryObject" resultType="com.heshan.springboot.web.myApp.modules.sys.entity.SysRoleResourceEntity">
+		select * from sys_role_resource where id = #{value}
+	</select>
+
+	<select id="getEntity" resultType="com.heshan.springboot.web.myApp.modules.sys.entity.SysRoleResourceEntity">
+		select * from sys_role_resource
+	</select>
+
+	<select id="queryList" resultType="com.heshan.springboot.web.myApp.modules.sys.entity.SysRoleResourceEntity">
+		select * from sys_role_resource
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from sys_role_resource
+	</select>
+	 
+	<insert id="save" parameterType="com.heshan.springboot.web.myApp.modules.sys.entity.SysRoleResourceEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into sys_role_resource
+		(
+														`role_id`, 												`res_id`, 												`org_id`, 												`create_time`, 												`create_user`							)
+		values
+		(
+														#{roleId}, 												#{resId}, 												#{orgId}, 												#{createTime}, 												#{createUser}							)
+	</insert>
+	 
+	<update id="update" parameterType="com.heshan.springboot.web.myApp.modules.sys.entity.SysRoleResourceEntity">
+		update sys_role_resource 
+		<set>
+														<if test="roleId != null">`role_id` = #{roleId}, </if>
+												<if test="resId != null">`res_id` = #{resId}, </if>
+												<if test="orgId != null">`org_id` = #{orgId}, </if>
+												<if test="createTime != null">`create_time` = #{createTime}, </if>
+												<if test="createUser != null">`create_user` = #{createUser}</if>
+							</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from sys_role_resource where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sys_role_resource where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+	
+	<insert id ="insertRoleResource" parameterType="com.heshan.springboot.web.myApp.modules.sys.entity.SysRoleResourceEntity" useGeneratedKeys="true" keyProperty="id">
+             insert into sys_role_resource
+             (role_id, res_id, org_id,create_time,create_user)
+             values
+             <foreach collection ="list" item="reddem" index= "index" separator =",">
+                 (
+                 #{reddem.roleId},
+                 #{reddem.resId},
+                 #{reddem.orgId},
+                 #{reddem.createTime}, 
+                 #{reddem.createUser}
+                 )
+             </foreach >
+      </insert >
+
+</mapper>

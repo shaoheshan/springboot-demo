@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.heshan.springboot.web.myApp.modules.sys.dao.SysResourceDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.heshan.springboot.web.myApp.modules.sys.entity.SysResourceEntity" id="sysResourceMap">
+					<result property="id" column="id"/>
+					<result property="name" column="name"/>
+					<result property="code" column="code"/>
+					<result property="url" column="url"/>
+					<result property="orderby" column="orderby"/>
+					<result property="menuType" column="menu_type"/>
+					<result property="parentId" column="parent_id"/>
+					<result property="isenable" column="isenable"/>
+					<result property="status" column="status"/>
+					<result property="imgUrl" column="img_url"/>
+					<result property="checked" column="checked"/>
+					<result property="hasModel" column="has_model"/>
+		    </resultMap>
+
+	<select id="queryObject" resultType="com.heshan.springboot.web.myApp.modules.sys.entity.SysResourceEntity">
+		select * from sys_resource where id = #{value}
+	</select>
+
+	<select id="getEntity" resultType="com.heshan.springboot.web.myApp.modules.sys.entity.SysResourceEntity">
+		select * from sys_resource
+	</select>
+
+	<select id="queryList" resultType="com.heshan.springboot.web.myApp.modules.sys.entity.SysResourceEntity">
+		select * from sys_resource
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from sys_resource
+	</select>
+	 
+	<insert id="save" parameterType="com.heshan.springboot.web.myApp.modules.sys.entity.SysResourceEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into sys_resource
+		(
+														`name`, 												`code`, 												`url`, 												`orderby`, 												`menu_type`, 												`parent_id`, 												`isenable`, 												`status`, 												`img_url`							)
+		values
+		(
+														#{name}, 												#{code}, 												#{url}, 												#{orderby}, 												#{menuType}, 												#{parentId}, 												#{isenable}, 												#{status}, 												#{imgUrl}							)
+	</insert>
+	 
+	<update id="update" parameterType="com.heshan.springboot.web.myApp.modules.sys.entity.SysResourceEntity">
+		update sys_resource 
+		<set>
+														<if test="name != null">`name` = #{name}, </if>
+												<if test="code != null">`code` = #{code}, </if>
+												<if test="url != null">`url` = #{url}, </if>
+												<if test="orderby != null">`orderby` = #{orderby}, </if>
+												<if test="menuType != null">`menu_type` = #{menuType}, </if>
+												<if test="parentId != null">`parent_id` = #{parentId}, </if>
+												<if test="isenable != null">`isenable` = #{isenable}, </if>
+												<if test="status != null">`status` = #{status}, </if>
+												<if test="imgUrl != null">`img_url` = #{imgUrl}</if>
+												<if test="hasModel != null">`has_model` = #{hasModel}</if>
+							</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from sys_resource where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sys_resource where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+	
+	<select id ="getResourceByRole"  resultType="com.heshan.springboot.web.myApp.modules.sys.entity.SysResourceEntity">
+		SELECT r.id, r.code, r.name, r.url, r.parent_id parentId, r.isenable,r.img_url,r.has_model,
+		CASE WHEN rr.res_id IS NOT NULL THEN 1 ELSE 0 END checked 
+		FROM sys_resource r 
+		LEFT JOIN sys_role_resource rr
+		ON rr.res_id = r.id 
+		AND rr.org_id = #{orgId}
+		AND rr.role_id = #{roleId}
+		WHERE r.status = 1 
+		AND r.isenable = 1 
+		<if test="hasModel != null">
+			and	r.has_model = #{hasModel}
+		</if>
+		ORDER BY r.orderby 
+	</select>
+	
+	<delete id="deleteRo">
+		delete from sys_role_resource where org_id = #{orgId} and  role_id = #{roleId}
+	</delete>
+	
+	<select id="roReList" resultType="com.heshan.springboot.web.myApp.modules.sys.entity.SysResourceEntity">
+		select * from sys_role_resource where org_id = #{orgId} and  role_id = #{roleId}
+	</select>
+	
+	<select id="queryResourceList"  resultType="com.heshan.springboot.web.myApp.modules.sys.entity.SysResourceEntity">
+		SELECT r.id, r.code, r.name, r.url, r.parent_id, r.isenable, r.img_url , r.has_model , '1' as checked from sys_resource r 
+		<where>
+			<if test="hasModel != null">
+				r.has_model = #{hasModel}
+			</if>
+		</where>		
+		 ORDER BY r.orderby 
+	</select>
+	
+	<!-- 查询用户的所有权限 -->
+	<select id="getUserResourceList" resultType="com.heshan.springboot.web.myApp.modules.sys.entity.SysResourceEntity">
+		select distinct r.id, r.code, r.name, r.url, r.parent_id parentId, r.isenable,r.img_url,r.has_model,
+			CASE WHEN rm.res_id IS NOT NULL THEN 1 ELSE 0 END checked 
+			from sys_resource r
+			LEFT JOIN sys_role_resource rm on rm.res_id = r.id 
+			LEFT JOIN	sys_user_role ur on ur.role_id = rm.role_id 
+			where ur.user_id = #{userId} ORDER BY `code`
+	</select>
+
+</mapper>

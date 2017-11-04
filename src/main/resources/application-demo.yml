@@ -1,0 +1,30 @@
+spring:
+    datasource:
+        url: jdbc:mysql://192.168.4.67:3306/hospital_db_v2?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2B8
+        username: hospital_db_user
+        password: Vh2016!@#
+        initialSize: 10
+        minIdle: 10
+        maxActive: 100
+        maxWait: 60000
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: SELECT 1 FROM DUAL
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+        maxPoolPreparedStatementPerConnectionSize: 20
+
+#biz
+vhsc:
+  allowed-origins: "*"        #'*'表示允许所有域名访问，可以设置为指定域名访问，多个域名中间用','隔开
+  kaptcha-open: false         #是否开启登录时验证码 (true/false)
+  file-upload-path: upload    #文件上传目录(不配置默认则是项目WEB根目录下的upload目录),可以是绝对路径也可是相对路径
+  file-upload-max:  5242880   #单位B，默认5M(1024*1024*5)
+  authorization-expire-time: 864000 #auth失效时间 单位：秒
+  log:
+    respNoticeTime: 1000      #超过1000毫秒的调用链则日志告警
+    hasHeaders: false         #日志是否收集请求头信息
+    hasParams: true           #日志是否收集请求参数信息
+    hasResult: false          #日志是否收集返回值信息

@@ -1,0 +1,99 @@
+package ${package}.controller;
+
+import java.util.List;
+import java.util.Map;
+
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import ${package}.entity.${className}Entity;
+import ${package}.service.${className}Service;
+import PageResult;
+import PageUtils;
+import QueryObject;
+import AbstractCtrl;
+
+
+
+
+/**
+ * ${comments}
+ *
+ * @author ${author}
+ * @email ${email}
+ * @date ${datetime}
+ */
+@RestController
+@RequestMapping("${pathName}")
+public class ${className}Controller extends AbstractCtrl{
+	@Autowired
+	private ${className}Service ${classname}Service;
+
+	/**
+	 * 列表
+	 */
+	@RequestMapping("/list")
+	@RequiresPermissions("${pathName}:list")
+	public PageResult list(@RequestParam Map<String, Object> params){
+		//查询列表数据
+        QueryObject query = new QueryObject(params);
+
+		List<${className}Entity> ${classname}List = ${classname}Service.queryList(query);
+		int total = ${classname}Service.queryTotal(query);
+
+		PageUtils pageUtil = new PageUtils(${classname}List, total, query.getLimit(), query.getPage());
+
+		return PageResult.ok().put("page", pageUtil);
+	}
+
+
+	/**
+	 * 信息
+	 */
+	@RequestMapping("/info/{${pk.attrname}}")
+	@RequiresPermissions("${pathName}:info")
+	public PageResult info(@PathVariable("${pk.attrname}") ${pk.attrType} ${pk.attrname}){
+		${className}Entity ${classname} = ${classname}Service.queryObject(${pk.attrname});
+
+		return PageResult.ok().put("${classname}", ${classname});
+	}
+
+	/**
+	 * 保存
+	 */
+	@RequestMapping("/save")
+	@RequiresPermissions("${pathName}:save")
+	public PageResult save(@RequestBody ${className}Entity ${classname}){
+		${classname}Service.save(${classname});
+
+		return PageResult.ok();
+	}
+
+	/**
+	 * 修改
+	 */
+	@RequestMapping("/update")
+	@RequiresPermissions("${pathName}:update")
+	public PageResult update(@RequestBody ${className}Entity ${classname}){
+		${classname}Service.update(${classname});
+
+		return PageResult.ok();
+	}
+
+	/**
+	 * 删除
+	 */
+	@RequestMapping("/delete")
+	@RequiresPermissions("${pathName}:delete")
+	public PageResult delete(@RequestBody ${pk.attrType}[] ${pk.attrname}s){
+		${classname}Service.deleteBatch(${pk.attrname}s);
+
+		return PageResult.ok();
+	}
+
+}

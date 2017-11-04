@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.heshan.springboot.web.myApp.modules.sys.dao.SysRoleVendorDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.heshan.springboot.web.myApp.modules.sys.entity.SysRoleVendorEntity" id="sysRoleVendorMap">
+        <result property="id" column="id"/>
+        <result property="roleId" column="role_id"/>
+        <result property="venCode" column="ven_code"/>
+        <result property="venName" column="ven_name"/>
+        <result property="orgId" column="org_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createUser" column="create_user"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.heshan.springboot.web.myApp.modules.sys.entity.SysRoleVendorEntity">
+		select * from sys_role_vendor where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.heshan.springboot.web.myApp.modules.sys.entity.SysRoleVendorEntity">
+		select * from sys_role_vendor
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from sys_role_vendor 
+	</select>
+	 
+	<insert id="save" parameterType="com.heshan.springboot.web.myApp.modules.sys.entity.SysRoleVendorEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into sys_role_vendor
+		(
+			`role_id`, 
+			`ven_code`, 
+			`ven_name`, 
+			`org_id`, 
+			`create_time`, 
+			`create_user`
+		)
+		values
+		(
+			#{roleId}, 
+			#{venCode}, 
+			#{venName}, 
+			#{orgId}, 
+			#{createTime}, 
+			#{createUser}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.heshan.springboot.web.myApp.modules.sys.entity.SysRoleVendorEntity">
+		update sys_role_vendor 
+		<set>
+			<if test="roleId != null">`role_id` = #{roleId}, </if>
+			<if test="venCode != null">`ven_code` = #{venCode}, </if>
+			<if test="venName != null">`ven_name` = #{venName}, </if>
+			<if test="orgId != null">`org_id` = #{orgId}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="createUser != null">`create_user` = #{createUser}</if>
+			<if test="createUser != null">`create_user` = #{createUser}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from sys_role_vendor where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sys_role_vendor where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+	
+	<select id="queryIdList" resultType="long">
+		select * from sys_role_vendor where org_id = #{orgId}
+	</select>
+	
+	<select id="getSelectedCompany" resultType="com.heshan.springboot.web.myApp.modules.sys.entity.SysRoleVendorEntity">
+		select rc.ven_code,b.ven_name from 
+		sys_role_vendor rc 
+		left join dict_vendor b 
+		on rc.org_id=b.org_id 
+		and rc.ven_code=b.ven_code 
+		where rc.role_id=#{roleId}
+	</select>
+
+	<select id="getNotSelectedCompany" resultType="com.heshan.springboot.web.myApp.modules.sys.entity.SysRoleVendorEntity">
+		SELECT c.ven_code, c.ven_name 
+		FROM dict_vendor c 
+		WHERE c.org_id = #{orgId}
+		and c.status = 1
+	</select>
+	
+	<select id="getNotAdminSelectedCompany" resultType="com.heshan.springboot.web.myApp.modules.sys.entity.SysRoleVendorEntity">
+		SELECT c.ven_code, c.ven_name 
+		FROM dict_vendor c 
+		left join sys_role_vendor rv 
+		on c.org_id=rv.org_id 
+		and rv.ven_code=c.ven_code
+		where c.org_id= #{orgId}
+		and rv.role_id = #{roleId}
+		and c.status =1
+		
+	</select>
+	
+	
+	<delete id="clear">
+		delete from sys_role_vendor where org_id = #{orgId} and role_id=#{roleId}
+	</delete>
+	
+	<insert id ="fastInsert" parameterType="com.heshan.springboot.web.myApp.modules.sys.entity.SysRoleVendorEntity" useGeneratedKeys="true" keyProperty="id">
+             insert into sys_role_vendor
+             (role_id, ven_code, ven_name, org_id,create_time,create_user)
+             values
+             <foreach collection ="list" item="reddem" index= "index" separator =",">
+                 (
+                 #{reddem.roleId}, #{reddem.venCode},
+                 #{reddem.venName},
+                 #{reddem.orgId},
+                 #{reddem.createTime}, #{reddem.createUser}
+                 )
+             </foreach >
+      </insert >
+      
+      <select id="queryVendorsByRoleIds" resultType="com.heshan.springboot.web.myApp.modules.sys.entity.SysRoleVendorEntity">
+		
+		select distinct ven_code, ven_name, org_id from sys_role_vendor where role_id in
+		 <foreach collection="list" item="roleId" open="(" close=")" separator=",">
+            #{roleId}
+        </foreach>
+	</select>
+      
+      
+</mapper>

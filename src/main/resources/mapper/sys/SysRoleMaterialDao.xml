@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.heshan.springboot.web.myApp.modules.sys.dao.SysRoleMaterialDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.heshan.springboot.web.myApp.modules.sys.entity.SysRoleMaterialEntity" id="sysRoleMaterialMap">
+        <result property="id" column="id"/>
+        <result property="roleId" column="role_id"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="materialName" column="material_name"/>
+        <result property="orgId" column="org_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createUser" column="create_user"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.heshan.springboot.web.myApp.modules.sys.entity.SysRoleMaterialEntity">
+		select * from sys_role_material where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.heshan.springboot.web.myApp.modules.sys.entity.SysRoleMaterialEntity">
+		select * from sys_role_material
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from sys_role_material 
+	</select>
+	 
+	<insert id="save" parameterType="com.heshan.springboot.web.myApp.modules.sys.entity.SysRoleMaterialEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into sys_role_material
+		(
+			`role_id`, 
+			`material_code`, 
+			`material_name`, 
+			`org_id`, 
+			`create_time`, 
+			`create_user`
+		)
+		values
+		(
+			#{roleId}, 
+			#{materialCode}, 
+			#{materialName}, 
+			#{orgId}, 
+			#{createTime}, 
+			#{createUser}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.heshan.springboot.web.myApp.modules.sys.entity.SysRoleMaterialEntity">
+		update sys_role_material 
+		<set>
+			<if test="roleId != null">`role_id` = #{roleId}, </if>
+			<if test="materialCode != null">`material_code` = #{materialCode}, </if>
+			<if test="materialName != null">`material_name` = #{materialName}, </if>
+			<if test="orgId != null">`org_id` = #{orgId}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="createUser != null">`create_user` = #{createUser}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from sys_role_material where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sys_role_material where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+	
+	<select id="getMaterialsCodes" resultType="com.heshan.springboot.web.myApp.modules.sys.entity.SysRoleMaterialEntity">
+		select material_code from sys_role_material where org_id = #{orgId} 
+		<!-- 判断登录用户的数据权限 -->
+			<if test="vendorDataSql != null and vendorDataSql.trim() != ''">
+				and ven_code in (${vendorDataSql})
+			</if>s
+	</select>
+	
+	<select id="getIsNOMaterials" resultType="com.heshan.springboot.web.myApp.modules.sys.entity.SysRoleMaterialEntity">
+			SELECT
+			m.material_code materialCode, 
+			m.material_name materialName, 
+			 CASE WHEN m.type_code IS NULL THEN '0' ELSE m.type_code END typeCode, 
+			1 AS isLeaf, 
+			0 AS isParent, 
+			CASE 
+			WHEN rm.material_code IS NOT NULL THEN 
+			1 
+			ELSE 
+			0 
+			END checked,
+			1 AS isMaterial 
+			FROM 
+			dict_material m 
+			LEFT JOIN sys_role_material rm ON rm.material_code = m.material_code 
+			AND rm.org_id = m.org_id 
+			AND rm.org_id = #{orgId} 
+			AND rm.role_id = #{roleId}
+			WHERE 
+			m.org_id = #{orgId} 
+			AND m.type_code IS NOT NULL 
+			AND m.type_code &lt;&gt;  '' 
+			AND m.material_code &lt;&gt; '' 
+			AND m.material_code in (select material_code from sys_role_material where org_id = #{orgId}) 
+	</select>
+	
+<select id="getIsMaterials" resultType="com.heshan.springboot.web.myApp.modules.sys.entity.SysRoleMaterialEntity">
+			SELECT
+			m.material_code materialCode, 
+			m.material_name materialName, 
+			 CASE WHEN m.type_code IS NULL THEN '0' ELSE m.type_code END typeCode, 
+			1 AS isLeaf, 
+			0 AS isParent, 
+			CASE 
+			WHEN rm.material_code IS NOT NULL THEN 
+			1 
+			ELSE 
+			0 
+			END checked,
+			1 AS isMaterial 
+			FROM 
+			dict_material m 
+			LEFT JOIN sys_role_material rm ON rm.material_code = m.material_code 
+			AND rm.org_id = m.org_id 
+			AND rm.org_id = #{orgId} 
+			AND rm.role_id = #{roleId}
+			WHERE 
+			m.org_id = #{orgId} 
+			AND m.type_code IS NOT NULL 
+			AND m.type_code &lt;&gt;  '' 
+			AND m.material_code &lt;&gt; '' 
+	</select>
+	
+	<select id="getmaterialType" resultType="com.heshan.springboot.web.myApp.modules.sys.entity.SysRoleMaterialEntity">
+					SELECT
+			m.type_code materialCode, 
+			m.type_name materialName, 
+			CASE WHEN (m.parent_code ='' or m.parent_code is null) THEN '0' ELSE m.parent_code END pid,
+			0 isLeaf, 
+			1 AS isParent, 
+			'' AS checked,
+			0 AS isMaterial 
+			FROM 
+				dict_material_type m
+			WHERE
+			m.org_id = #{orgId} 
+	</select>
+	
+	<select id="queryMaterialsByRoleIds" resultType="com.heshan.springboot.web.myApp.modules.sys.entity.SysRoleMaterialEntity">
+		
+		select distinct material_code,material_name,org_id from sys_role_material where role_id in
+		 <foreach collection="list" item="roleId" open="(" close=")" separator=",">
+            #{roleId}
+        </foreach>
+		
+	</select>
+	
+	<select id="getSelectedMaterialsCatalog" resultType="com.heshan.springboot.web.myApp.modules.sys.entity.SysRoleMaterialEntity">
+    	SELECT t.type_code id, t.type_name name, t.parent_code pid 
+		FROM (sys_role_material AS r INNER JOIN dict_material AS d 
+		on r.org_id = d.org_id AND  r.material_code = d.material_code)
+		INNER JOIN dict_material_type AS t ON t.type_code = d.type_code AND d.org_id = t.org_id
+		WHERE
+		 r.org_id = #{orgId}
+		AND r.role_id = #{roleId}
+    </select>	
+    <delete id="clear">
+    	delete from sys_role_material where role_id = #{roleId} and org_id = #{orgId}
+    </delete>
+    
+    <insert id="fastInsert" parameterType="com.heshan.springboot.web.myApp.modules.sys.entity.SysRoleMaterialEntity" useGeneratedKeys="true" keyProperty="id">
+    	     insert into sys_role_material
+             (role_id, material_code, material_name, org_id,create_time,create_user)
+             values
+             <foreach collection ="list" item="reddem" index= "index" separator =",">
+                 (
+                 #{reddem.roleId}, #{reddem.materialCode},
+                 #{reddem.materialName},
+                 #{reddem.orgId},
+                 #{reddem.createTime}, #{reddem.createUser}
+                 )
+             </foreach >
+    </insert>
+	
+</mapper>
