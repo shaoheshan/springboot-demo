@@ -34,6 +34,5 @@
 - 页面交互：Vue2.x 
 <br>
  **本地部署**
-- Swagger路径：http://localhost:8080/swagger.html
-
+- Swagger路径：http://localhost:8080/swagger-ui.html
 <br>
